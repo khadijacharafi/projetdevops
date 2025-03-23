@@ -1,0 +1,29 @@
+version: '3'
+services:
+  api:
+    image: student-api
+    build: ./simple_api  # Chemin relatif vers le dossier contenant le Dockerfile
+    ports:
+      - "5001:5000"
+    volumes:
+      - ./simple_api/student_age.json:/data/student_age.json  # Monte le fichier JSON dans /data du conteneur
+    networks:
+      - supmit-network
+
+  website:
+    image: php:apache
+    ports:
+      - "8082:80"
+    volumes:
+      - ./website:/var/www/html  # Monte le dossier "website" local dans /var/www/html du conteneur
+    environment:
+      - USERNAME=root
+      - PASSWORD=root
+    depends_on:
+      - api
+    networks:
+      - supmit-network
+
+networks:
+  supmit-network:
+    driver: bridge
